@@ -6,6 +6,23 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		B5DF7CCC2F193CD9003DA965 /* Lottie in Frameworks */ = {isa = PBXBuildFile; productRef = B5DF7CCB2F193CD9003DA965 /* Lottie */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		B5DF7CBA2F193AB6003DA965 /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		B5DF7C912F192818003DA965 /* sliderUIKit.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = sliderUIKit.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -36,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B5DF7CCC2F193CD9003DA965 /* Lottie in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +86,7 @@
 				B5DF7C8D2F192818003DA965 /* Sources */,
 				B5DF7C8E2F192818003DA965 /* Frameworks */,
 				B5DF7C8F2F192818003DA965 /* Resources */,
+				B5DF7CBA2F193AB6003DA965 /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -78,6 +97,7 @@
 			);
 			name = sliderUIKit;
 			packageProductDependencies = (
+				B5DF7CCB2F193CD9003DA965 /* Lottie */,
 			);
 			productName = sliderUIKit;
 			productReference = B5DF7C912F192818003DA965 /* sliderUIKit.app */;
@@ -107,6 +127,9 @@
 			);
 			mainGroup = B5DF7C882F192818003DA965;
 			minimizedProjectReferenceProxies = 1;
+			packageReferences = (
+				B5DF7CCA2F193CD9003DA965 /* XCRemoteSwiftPackageReference "lottie-ios" */,
+			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = B5DF7C922F192818003DA965 /* Products */;
 			projectDirPath = "";
@@ -339,6 +362,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		B5DF7CCA2F193CD9003DA965 /* XCRemoteSwiftPackageReference "lottie-ios" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/airbnb/lottie-ios";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.6.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		B5DF7CCB2F193CD9003DA965 /* Lottie */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = B5DF7CCA2F193CD9003DA965 /* XCRemoteSwiftPackageReference "lottie-ios" */;
+			productName = Lottie;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = B5DF7C892F192818003DA965 /* Project object */;
 }

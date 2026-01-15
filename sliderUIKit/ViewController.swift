@@ -10,9 +10,9 @@ import UIKit
 class ViewController: UIViewController {
     
     private let sliderData: [SliderItem] = [
-        SliderItem(color: .brown, title: "Slide 1", text: "lorem ipsum dolor sit amet consectetur adipiscing elit. ", animationName: ""),
-        SliderItem(color: .orange, title: "Slide 2", text: "ipsum dolor sit amet consectetur adipiscing elit.sit amet consectetur adipiscing ", animationName: ""),
-        SliderItem(color: .gray, title: "Slide 3", text: "Оно конечно прикольно, только ios разработка потихоньку схлопывается в РФ, самое время переходить на флаттер какой-нибудь :)", animationName: "")
+        SliderItem(color: .brown, title: "Slide 1", text: "lorem ipsum dolor sit amet consectetur adipiscing elit. ", animationName: "Space Runner"),
+        SliderItem(color: .orange, title: "Slide 2", text: "ipsum dolor sit amet consectetur adipiscing elit.sit amet consectetur adipiscing ", animationName: "space x f"),
+        SliderItem(color: .gray, title: "Slide 3", text: "Оно конечно прикольно, только ios разработка потихоньку схлопывается в РФ, самое время переходить на флаттер какой-нибудь :)", animationName: "space boy developer.json")
     ]
     
     lazy var collectionView: UICollectionView = {
@@ -60,8 +60,10 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? SliderCell {
             
             cell.contentView.backgroundColor = sliderData[indexPath.row].color
-            cell.titleLabel.text = sliderData[indexPath.row].title
+            cell.titleLabel.text = sliderData[indexPath.item].title
             cell.textLabel.text = sliderData[indexPath.item].text
+            
+            cell.setunAnimation(animationName: sliderData[indexPath.item].animationName)
             
             return cell
         }
