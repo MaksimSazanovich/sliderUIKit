@@ -61,12 +61,3 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-site/
-docs/lottie.schema.json
-docs/scripts/blockly_generated.js
-codemirror/node_modules/
-codemirror/package-lock.json
-docs/lottie.js
-tools/dist/
-tools/lottie_docs.egg-info/
-tools/lottie_docs/lottie.schema.json
