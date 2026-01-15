@@ -26,7 +26,7 @@ class ViewController: UIViewController {
         let collection = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.delegate = self
         collection.dataSource = self
-        collection.register(UICollectionViewCell.self, forCellWithReuseIdentifier: "cell")
+        collection.register(SliderCell.self, forCellWithReuseIdentifier: "cell")
         collection.translatesAutoresizingMaskIntoConstraints = false
         collection.isPagingEnabled = true
         
@@ -57,10 +57,17 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath)
-        cell.contentView.backgroundColor = sliderData[indexPath.item].color
+        if let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cell", for: indexPath) as? SliderCell {
+            
+            cell.contentView.backgroundColor = sliderData[indexPath.row].color
+            cell.titleLabel.text = sliderData[indexPath.row].title
+            cell.textLabel.text = sliderData[indexPath.item].text
+            
+            return cell
+        }
+       
+        return UICollectionViewCell()
         
-        return cell
     }
 }
 
