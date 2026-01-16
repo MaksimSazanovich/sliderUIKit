@@ -15,10 +15,13 @@ class ViewController: UIViewController {
         SliderItem(color: .gray, title: "Slide 3", text: "Оно конечно прикольно, только ios разработка потихоньку схлопывается в РФ, самое время переходить на флаттер какой-нибудь :)", animationName: "space boy developer.json")
     ]
     
+    private let shape = CAShapeLayer()
+    
     private var pagers: [UIView] = []
     private var currentSlide = 0
     private var previousSlide = 0
     private var widthAnchor: NSLayoutConstraint?
+    private var fromValue = CGFloat(0)
     
     lazy var collectionView: UICollectionView = {
         
@@ -103,6 +106,7 @@ class ViewController: UIViewController {
         super.viewDidLoad()
         setupCollection()
         setupControll()
+        setupShape()
     }
 
     private func setupCollection() {
@@ -151,8 +155,35 @@ class ViewController: UIViewController {
         ])
     }
     
+    private func setupShape() {
+        let nextStroke = UIBezierPath(arcCenter: CGPoint(x: 25, y: 25), radius: 23, startAngle: -(.pi/2), endAngle: 5, clockwise: true)
+        
+        let trackShape = CAShapeLayer()
+        trackShape.path = nextStroke.cgPath
+        trackShape.fillColor = UIColor.clear.cgColor
+        trackShape.strokeColor = UIColor.white.cgColor
+        trackShape.lineWidth = 3
+        trackShape.opacity = 0.1
+        nextButton.layer.addSublayer(trackShape)
+        
+        shape.path = nextStroke.cgPath
+        shape.fillColor = UIColor.clear.cgColor
+        shape.strokeColor = UIColor.white.cgColor
+        shape.lineWidth = 3
+        shape.lineCap = .round
+        shape.strokeStart = 0
+        shape.strokeEnd = 0
+        
+        nextButton.layer.addSublayer(shape)
+    }
+    
     @objc func nextSlide() {
-        print("nextSlide")
+        let maxSlide = sliderData.count - 1
+        
+        if currentSlide < maxSlide {
+            currentSlide += 1
+            collectionView.scrollToItem(at: IndexPath(item: currentSlide, section: 0), at: .centeredHorizontally, animated: true)
+        }
     }
     
     @objc func scrollToSlide(sender: UIGestureRecognizer) {
@@ -178,7 +209,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             cell.titleLabel.text = sliderData[indexPath.item].title
             cell.textLabel.text = sliderData[indexPath.item].text
             
-            //.setunAnimation(animationName: sliderData[indexPath.item].animationName)
+            cell.setunAnimation(animationName: sliderData[indexPath.item].animationName)
             
             return cell
         }
@@ -187,12 +218,26 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        
         previousSlide = currentSlide
         currentSlide = indexPath.item
         
-//        print("willDisplay current slide: \(currentSlide)")
-//        print("willDisplay previous slide: \(previousSlide)")
-        
+        animatePagers()
+        animateNextButton()
+    }
+    
+   func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+       
+       if currentSlide == indexPath.item {
+           
+           currentSlide = previousSlide
+           
+           animatePagers()
+           animateNextButton()
+       }
+    }
+    
+    private func animatePagers() {
         pagers.forEach { page in
             
             page.constraints.forEach { constraint in
@@ -200,7 +245,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             }
             
             let tag = page.tag
-            let viewTag = indexPath.item + 1
+            let viewTag = currentSlide + 1
             
             if tag == viewTag {
                 UIView.animate(withDuration: 0.3) {page.layer.opacity = 1}
@@ -215,37 +260,22 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         }
     }
     
-   func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-//       print("didDisplay current slide: \(currentSlide)")
-//       print("didDisplay indexPath.item: \(indexPath.item)")
-//       print("didDisplay previous slide: \(previousSlide)")
-       
-       if currentSlide == indexPath.item {
-           
-           currentSlide = previousSlide
-           
-           pagers.forEach { page in
-               
-               page.constraints.forEach { constraint in
-                   page.removeConstraint(constraint)
-               }
-               
-               let tag = page.tag
-               let viewTag = currentSlide + 1
-               
-               if tag == viewTag {
-                   UIView.animate(withDuration: 0.3) {page.layer.opacity = 1}
-                   UIView.animate(withDuration: 0.3) {self.widthAnchor = page.widthAnchor.constraint(equalToConstant: 20)}
-               } else {
-                   UIView.animate(withDuration: 0.3) {page.layer.opacity = 0.5}
-                   UIView.animate(withDuration: 0.3) {self.widthAnchor = page.widthAnchor.constraint(equalToConstant: 10)}
-               }
-               
-               widthAnchor?.isActive = true
-               page.heightAnchor.constraint(equalToConstant: 10).isActive = true
-           }
-       }
+    private func animateNextButton() {
+        
+        let animation = CABasicAnimation(keyPath: "strokeEnd")
+        
+        let toValue = CGFloat(currentSlide + 1) / CGFloat(pagers.count)
+        
+        animation.fromValue = fromValue
+        animation.toValue = toValue
+        animation.isRemovedOnCompletion = false
+        animation.fillMode = .forwards
+        animation.duration = 0.3
+        shape.add(animation, forKey: "animation")
+        
+        fromValue = toValue
     }
+    
 }
 
 struct SliderItem {
