@@ -16,6 +16,9 @@ class ViewController: UIViewController {
     ]
     
     private var pagers: [UIView] = []
+    private var currentSlide = 0
+    private var previousSlide = 0
+    private var widthAnchor: NSLayoutConstraint?
     
     lazy var collectionView: UICollectionView = {
         
@@ -129,9 +132,8 @@ class ViewController: UIViewController {
             pager.tag = tag
             pager.translatesAutoresizingMaskIntoConstraints = false
             pager.backgroundColor = .white
-            pager.widthAnchor.constraint(equalToConstant: 10).isActive = true
-            pager.heightAnchor .constraint(equalToConstant: 10).isActive = true
             pager.layer.cornerRadius = 5
+            pager.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(scrollToSlide(sender: ))))
             self.pagers.append(pager)
             pagerStack.addArrangedSubview(pager)
         }
@@ -150,7 +152,16 @@ class ViewController: UIViewController {
     }
     
     @objc func nextSlide() {
-        
+        print("nextSlide")
+    }
+    
+    @objc func scrollToSlide(sender: UIGestureRecognizer) {
+        if let index = sender.view?.tag {
+            collectionView.scrollToItem(at: IndexPath(row: index - 1, section: 0), at: .centeredHorizontally, animated: true)
+            
+            previousSlide = currentSlide
+            currentSlide = index - 1
+        }
     }
 
 }
@@ -173,7 +184,67 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
         }
        
         return UICollectionViewCell()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        previousSlide = currentSlide
+        currentSlide = indexPath.item
         
+//        print("willDisplay current slide: \(currentSlide)")
+//        print("willDisplay previous slide: \(previousSlide)")
+        
+        pagers.forEach { page in
+            
+            page.constraints.forEach { constraint in
+                page.removeConstraint(constraint)
+            }
+            
+            let tag = page.tag
+            let viewTag = indexPath.item + 1
+            
+            if tag == viewTag {
+                UIView.animate(withDuration: 0.3) {page.layer.opacity = 1}
+                UIView.animate(withDuration: 0.3) {self.widthAnchor = page.widthAnchor.constraint(equalToConstant: 20)}
+            } else {
+                UIView.animate(withDuration: 0.3) {page.layer.opacity = 0.5}
+                UIView.animate(withDuration: 0.3) {self.widthAnchor = page.widthAnchor.constraint(equalToConstant: 10)}
+            }
+            
+            widthAnchor?.isActive = true
+            page.heightAnchor.constraint(equalToConstant: 10).isActive = true
+        }
+    }
+    
+   func collectionView(_ collectionView: UICollectionView, didEndDisplaying cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+//       print("didDisplay current slide: \(currentSlide)")
+//       print("didDisplay indexPath.item: \(indexPath.item)")
+//       print("didDisplay previous slide: \(previousSlide)")
+       
+       if currentSlide == indexPath.item {
+           
+           currentSlide = previousSlide
+           
+           pagers.forEach { page in
+               
+               page.constraints.forEach { constraint in
+                   page.removeConstraint(constraint)
+               }
+               
+               let tag = page.tag
+               let viewTag = currentSlide + 1
+               
+               if tag == viewTag {
+                   UIView.animate(withDuration: 0.3) {page.layer.opacity = 1}
+                   UIView.animate(withDuration: 0.3) {self.widthAnchor = page.widthAnchor.constraint(equalToConstant: 20)}
+               } else {
+                   UIView.animate(withDuration: 0.3) {page.layer.opacity = 0.5}
+                   UIView.animate(withDuration: 0.3) {self.widthAnchor = page.widthAnchor.constraint(equalToConstant: 10)}
+               }
+               
+               widthAnchor?.isActive = true
+               page.heightAnchor.constraint(equalToConstant: 10).isActive = true
+           }
+       }
     }
 }
 
