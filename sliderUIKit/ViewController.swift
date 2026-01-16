@@ -15,6 +15,8 @@ class ViewController: UIViewController {
         SliderItem(color: .gray, title: "Slide 3", text: "Оно конечно прикольно, только ios разработка потихоньку схлопывается в РФ, самое время переходить на флаттер какой-нибудь :)", animationName: "space boy developer.json")
     ]
     
+    private var pagers: [UIView] = []
+    
     lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
@@ -32,10 +34,72 @@ class ViewController: UIViewController {
         
         return collection
     }()
+    
+    lazy var skipButton: UIButton = {
+        let button = UIButton()
+        button.setTitle("Skip", for: .normal)
+        button.setTitleColor(.white, for: .normal)
+        button.titleLabel?.font = .systemFont(ofSize: 12)
+        button.backgroundColor = .clear
+        
+        return button
+    }()
+    
+    lazy var vStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .vertical
+        stack.alignment = .leading
+        stack.spacing = 5
+        stack.distribution = .fillEqually
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    lazy var hStack: UIStackView = {
+        let stack = UIStackView()
+        stack.axis = .horizontal
+        stack.alignment = .center
+        stack.spacing = 0
+        stack.distribution = .equalSpacing
+        stack.translatesAutoresizingMaskIntoConstraints = false
+        
+        return stack
+    }()
+    
+    lazy var nextButton: UIView = {
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(nextSlide))
+        
+        let nextImage = UIImageView()
+        nextImage.image = UIImage(systemName: "chevron.right.circle.fill")
+        nextImage.tintColor = .white
+        nextImage.contentMode = .scaleAspectFit
+        nextImage.translatesAutoresizingMaskIntoConstraints = false
+        
+        nextImage.widthAnchor.constraint(equalToConstant: 45).isActive = true
+        nextImage.heightAnchor.constraint(equalToConstant: 45).isActive = true
+        
+        let button = UIView()
+        
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.widthAnchor.constraint(equalToConstant: 50).isActive = true
+        button.heightAnchor.constraint(equalToConstant: 50).isActive = true
+        button.isUserInteractionEnabled = true
+        button.addGestureRecognizer(tapGesture)
+        button.addSubview(nextImage)
+        
+        nextImage.centerXAnchor.constraint(equalTo: button.centerXAnchor).isActive = true
+        nextImage.centerYAnchor.constraint(equalTo: button.centerYAnchor).isActive = true
+        
+        return button
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupCollection()
+        setupControll()
     }
 
     private func setupCollection() {
@@ -47,6 +111,46 @@ class ViewController: UIViewController {
             collectionView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             collectionView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
         ])
+    }
+    
+    private func setupControll() {
+        
+        view.addSubview(hStack)
+            
+        let pagerStack = UIStackView()
+        pagerStack.axis = .horizontal
+        pagerStack.spacing = 5
+        pagerStack.alignment = .center
+        pagerStack.distribution = .fill
+        pagerStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        for tag in 1...sliderData.count {
+            let pager = UIView()
+            pager.tag = tag
+            pager.translatesAutoresizingMaskIntoConstraints = false
+            pager.backgroundColor = .white
+            pager.widthAnchor.constraint(equalToConstant: 10).isActive = true
+            pager.heightAnchor .constraint(equalToConstant: 10).isActive = true
+            pager.layer.cornerRadius = 5
+            self.pagers.append(pager)
+            pagerStack.addArrangedSubview(pager)
+        }
+        
+        vStack.addArrangedSubview(pagerStack)
+        vStack.addArrangedSubview(skipButton)
+        
+        hStack.addArrangedSubview(vStack)
+        hStack.addArrangedSubview(nextButton)
+        
+        NSLayoutConstraint.activate([
+            hStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            hStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+            hStack.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+        ])
+    }
+    
+    @objc func nextSlide() {
+        
     }
 
 }
@@ -63,7 +167,7 @@ extension ViewController: UICollectionViewDelegate, UICollectionViewDataSource {
             cell.titleLabel.text = sliderData[indexPath.item].title
             cell.textLabel.text = sliderData[indexPath.item].text
             
-            cell.setunAnimation(animationName: sliderData[indexPath.item].animationName)
+            //.setunAnimation(animationName: sliderData[indexPath.item].animationName)
             
             return cell
         }
